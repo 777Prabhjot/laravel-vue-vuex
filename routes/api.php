@@ -16,15 +16,22 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
+Route::group(
+    ['middleware' => ['authtoken','auth:sanctum']],
+    function () {
+        Route::post('/create', [VlogsController::class, 'store']);
+        Route::put('/update/{id}', [VlogsController::class, 'update']);
+        Route::delete('/delete/{id}', [VlogsController::class, 'delete']);
+        Route::get('/getUserInfo', [AuthController::class, 'getUserInfo']);
+   }
+);
+
+Route::get('/', [VlogsController::class, 'index']);
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-
-Route::get('/', [VlogsController::class, 'index']);
-Route::post('/create', [VlogsController::class, 'store']);
-Route::put('/update/{id}', [VlogsController::class, 'update']);
-Route::delete('/delete/{id}', [VlogsController::class, 'delete']);
+Route::any('/autherror', [AuthController::class, 'autherror'])->name('autherror');

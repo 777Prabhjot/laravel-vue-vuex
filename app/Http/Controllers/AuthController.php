@@ -31,6 +31,8 @@ class AuthController extends Controller
                 return response()->json([
                         'message' => 'User successfully registered',
                         'token' => $token,
+                        'currentUserId' => $user->id,
+                        'name' => $user->name
                 ]);
             }
         } catch (\Throwable $th) {
@@ -53,7 +55,18 @@ class AuthController extends Controller
             return response()->json([
                         'message' => 'Login successful',
                        'token' => $token,
+                       'currentUserId' => $user->id,
+                       'name' => $user->name
             ]);
 
+    }
+
+    public function getUserInfo(){
+
+        return response()->json(auth()->user());
+    }
+
+    public function autherror(){
+        return response()->json(["message" => 'You are not allowed to access this route']);
     }
 }

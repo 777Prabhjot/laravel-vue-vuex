@@ -17,7 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->unsignedBigInteger('posted_by');
             $table->string('image')->nullable();
-            $table->foreignId('posted_by')->references('id')->on('users');
+            $table->foreign('posted_by')->references('id')->on('users'); 
             $table->timestamps();
         });
     }
