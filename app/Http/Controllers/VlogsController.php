@@ -8,10 +8,27 @@ use App\Models\Vlogs;
 
 class VlogsController extends Controller
 {
+    /**
+     * Get all vlogs
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
-
         $vlogs = Vlogs::with('user')->get();
+
+        return response()->json($vlogs);
+    }
+
+    public function getVlogsByUser()
+    {
+
+
+        $userId = auth()->user()->id;
+
+        $vlogs = Vlogs::with('user')
+            ->where('posted_by', $userId)
+            ->get();
 
         return response()->json($vlogs);
     }
@@ -36,11 +53,20 @@ class VlogsController extends Controller
                 'title' => $request->title,
                 'description' => $request->description,
                 'image' => $imageName,
-                'posted_by' => auth()->user()->id
+                'posted_by' => auth()->user()->id,
             ]);
 
             if ($vlogs->save()) {
-                return response()->json(['message' => 'Vlog created successfully', 'data' => [$vlogs, 'username' => auth()->user()->name]], 201);
+                $newVlog = [
+                    'id' => $vlogs->id,
+                    'title' => $vlogs->title,
+                    'description' => $vlogs->description,
+                    'image' => $vlogs->image,
+                    'posted_by' => $vlogs->posted_by,
+                    'user' => ['name' => auth()->user()->name]
+                ];
+
+                return response()->json($newVlog);
             } else {
                 return response()->json(['message' => 'somehting went wrong',], 500);
             }
